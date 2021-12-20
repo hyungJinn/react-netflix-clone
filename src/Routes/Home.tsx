@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
 import { getMovies, IGetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
@@ -82,6 +82,27 @@ const Info = styled(motion.div)`
   }
 `;
 
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
+
+const BigMovie = styled(motion.div)`
+  position: absolute;
+  width: 40vw;
+  height: 80vh;
+  /* top: scrollY.get() + 100; */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+`;
+
+//사용자의 위치를 감지해서 바로 그곳에 상자를 보여주고 있다.
+
 const rowVariants = {
   hidden: {
     x: window.outerWidth + 5,
@@ -118,6 +139,7 @@ function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   console.log(bigMovieMatch);
+  const { scrollY } = useViewportScroll();
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -137,6 +159,7 @@ function Home() {
   const onBoxClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
   };
+  const onOverlayClick = () => history.push("/");
   return (
     <Wrapper>
       {isLoading ? (
@@ -184,19 +207,19 @@ function Home() {
           </Slider>
           <AnimatePresence>
             {bigMovieMatch ? (
-              <motion.div
-                layoutId={bigMovieMatch.params.movieId}
-                style={{
-                  position: "absolute",
-                  width: "40vw",
-                  height: "80vh",
-                  backgroundColor: "red",
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  margin: " 0 auto",
-                }}
-              />
+              <>
+                <Overlay
+                  onClick={onOverlayClick}
+                  exit={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
+                <BigMovie
+                  style={{ top: scrollY.get() + 100 }}
+                  layoutId={bigMovieMatch.params.movieId}
+                >
+                  hello
+                </BigMovie>
+              </>
             ) : null}
           </AnimatePresence>
         </>
