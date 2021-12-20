@@ -15,7 +15,8 @@ function App() {
         <Route path="/search">
           <Search />
         </Route>
-        <Route path="/">
+        <Route path={["/", "/movies/:movieId"]}>
+          {/* 두 개의 path에서 같은 컴포넌트를 render 하도록 할 수 있다. */}
           <Home />
         </Route>
       </Switch>
