@@ -142,6 +142,7 @@ function Header() {
     console.log(data);
     history.push(`/search?keyword=${data.keyword}`);
   };
+
   return (
     <Nav variants={navVariants} animate={navAnimation} initial="top">
       <Col>
@@ -158,6 +159,7 @@ function Header() {
         </Logo>
         <Items>
           <Item>
+            {/* use link not a, a refresh page, so don't use a! */}
             <Link to="/">
               Home
               {homeMatch?.isExact && <Circle layoutId="circle" />}
